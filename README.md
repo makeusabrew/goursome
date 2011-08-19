@@ -11,11 +11,11 @@ and [node.js](https://github.com/joyent/node).
 
 3) Run:
 
-    ./server.js /path/to/local/git/repo/ project_namespace | gource --log-format git -i 0 -
+    ./server.js /path/to/local/git/repo/ | gource --log-format git -i 0 -
 
 4) On a remote, slap this in your `post-receive`:
 
     read oldrev newrev refname
-    curl -d "oldrev=$oldrev&newrev=$newrev&refname=$refname&namespace=project_namespace" http://your-server-address:2424/ > /dev/null 2>&1
+    curl -d "oldrev=$oldrev&newrev=$newrev&refname=$refname" http://your-server-address:2424/ > /dev/null 2>&1
 
 5) You're done!
