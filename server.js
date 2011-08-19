@@ -35,14 +35,14 @@ http.createServer(function(req, res) {
 
             //process.stdout.write(postvars.revdata);
             if (postvars.oldrev && postvars.newrev) {
-                updateLog(postvars.oldrev, postvars.newrev);
+                updateLog(postvars.oldrev, postvars.newrev, function() {
+                    res.writeHead(200, {'Content-Type' : 'text/plain'});
+                    res.end('OK\n');
+                });
             } else {
                 res.writeHead(500, {'Content-Type' : 'text/plain'});
                 res.end('Missing required parameters\n');
             }
-
-            res.writeHead(200, {'Content-Type' : 'text/plain'});
-            res.end('OK\n');
         });
     } else {
         res.writeHead(200, {'Content-Type' : 'text/plain'});
@@ -50,7 +50,7 @@ http.createServer(function(req, res) {
     }
 }).listen(2424);
 
-var updateLog = function(oldrev, newrev) {
+var updateLog = function(oldrev, newrev, callback) {
     //
     spawn('git', ['pull']).on('exit', function(code) {
         if (code) throw new Error('Bad Code: '+code);
@@ -59,6 +59,11 @@ var updateLog = function(oldrev, newrev) {
 
         log.stdout.on('data', function(data) {
             process.stdout.write(data);
+        });
+
+        log.on('exit', function(code) {
+            if (code) throw new Error('Bad Code: '+code);
+            callback();
         });
     });
 }
