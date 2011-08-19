@@ -2,9 +2,6 @@
 
 var util = require('util'),
     spawn = require('child_process').spawn,
-    exec = require('child_process').exec,
-    fs = require('fs'),
-    url = require('url'),
     http = require('http');
 
 // was going to take path from the input request, but it makes more sense
