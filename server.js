@@ -4,6 +4,7 @@ var util = require('util'),
     spawn = require('child_process').spawn,
     querystring = require('querystring'),
     path = process.argv[2],
+    namespace = process.argv[3],
     http = require('http');
 
 try {
@@ -33,12 +34,21 @@ http.createServer(function(req, res) {
         req.on('end', function() {
             var postvars = querystring.parse(body);
 
-            //process.stdout.write(postvars.revdata);
-            if (postvars.oldrev && postvars.newrev) {
-                updateLog(postvars.oldrev, postvars.newrev, function() {
+            if (postvars.namespace && postvars.oldrev && postvars.newrev) {
+                if (postvars.namespace != namespace) {
                     res.writeHead(200, {'Content-Type' : 'text/plain'});
-                    res.end('OK\n');
-                });
+                    res.end('Incorrect namespace\n');
+                } else {
+                    updateLog(postvars.oldrev, postvars.newrev, function(code) {
+                        if (code == 0) {
+                            res.writeHead(200, {'Content-Type' : 'text/plain'});
+                            res.end('OK\n');
+                        } else {
+                            res.writeHead(200, {'Content-Type' : 'text/plain'});
+                            res.end('Error - git exited with code '+code);
+                        }
+                    });
+                }
             } else {
                 res.writeHead(500, {'Content-Type' : 'text/plain'});
                 res.end('Missing required parameters\n');
@@ -51,7 +61,6 @@ http.createServer(function(req, res) {
 }).listen(2424);
 
 var updateLog = function(oldrev, newrev, callback) {
-    //
     spawn('git', ['pull']).on('exit', function(code) {
         if (code) throw new Error('Bad Code: '+code);
 
@@ -62,8 +71,7 @@ var updateLog = function(oldrev, newrev, callback) {
         });
 
         log.on('exit', function(code) {
-            if (code) throw new Error('Bad Code: '+code);
-            callback();
+            callback(code);
         });
     });
 }
