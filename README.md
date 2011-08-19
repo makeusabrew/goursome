@@ -6,7 +6,9 @@ and [node.js](https://github.com/joyent/node).
 ## Quick Install
 
 1) Make sure you've got node properly installed, as goursome needs it to run
+
 2) Clone this repository to wherever you choose
+
 3) Run:
 
     ./server.js /path/to/local/git/repo/ | gource --log-format git -i 0 -
