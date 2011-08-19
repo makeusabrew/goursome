@@ -1,0 +1,10 @@
+#!/bin/bash
+namespace="namespace"
+server="127.0.0.1"
+port="2424"
+# We know a commit will only be one ref, so hard code the old and new revisions
+oldrev="HEAD^"
+newrev="HEAD"
+#refname is not yet used, so pass a dummy value
+refname="foobar"
+curl -d "oldrev=$oldrev&newrev=$newrev&refname=$refname&namespace=$namespace" http://$server:$port/ > /dev/null 2>&1
