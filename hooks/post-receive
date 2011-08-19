@@ -1,0 +1,7 @@
+#!/bin/bash
+namespace="namespace"
+server="127.0.0.1"
+port="2424"
+
+read oldrev newrev refname
+curl -d "oldrev=$oldrev&newrev=$newrev&refname=$refname&namespace=$namespace" http://$server:$port/ > /dev/null 2>&1
