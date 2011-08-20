@@ -54,6 +54,8 @@ involved in just sending commit refs rather than log messages was definitely one
 * visualised repository must be able to perform a `git pull` without interaction (e.g. no password or passphrase prompt)
 * no concept of branches - post-receive will always trigger, so it's master or bust for now
 * error intolerant - if something goes wrong, goursome won't really tell you, and bad things will probably happen
+* namespace stuff is a bit rubbish - it was just a quick fix to stop multiple post-receive hooks clashing given that only one HTTP
+instance will ever been running for one repository.
 
 ## License
 
