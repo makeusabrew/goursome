@@ -22,18 +22,21 @@ well to simplistic remote invocation (e.g. over http).
 
 1) Make sure you've got node properly installed, as goursome needs it to run
 
-2) Clone this repository to wherever you choose
+2) Make sure you've got gource installed too (ubuntu users: compile a later version than the 0.28 which ships with 11.04!)
 
-3) Run:
+3) Clone this repository to wherever you choose
+
+4) Run:
 
     ./server.js /path/to/local/git/repo/ project_namespace | gource --log-format git -i 0 -
 
-4) On a remote, slap this in your `post-receive`:
+5) On a remote, slap this in your `post-receive`, and make sure it has execute permissions:
 
+    #!/bin/bash
     read oldrev newrev refname
     curl -d "oldrev=$oldrev&newrev=$newrev&refname=$refname&namespace=project_namespace" http://your-server-address:2424/ > /dev/null 2>&1
 
-5) You're done!
+6) You're done!
 
 ## Use Cases
 
