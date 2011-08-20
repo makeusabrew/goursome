@@ -33,3 +33,14 @@ well to simplistic remote invocation (e.g. over http).
 The primary use case is to have a permanent, up-to-date visualisation of a project's source tree on show in a team environment.
 Given the distributed nature of git, goursome will work best as a post-receive hook on a remote repository which everyone in the team
 pushes to - e.g. in the most svn-esque use case where everyone in the team pushes to a main remote.
+
+## Current Limitations
+
+Plenty of them:
+
+* each visualisation is bound to a single HTTP server - can't run more than one per machine without altering port bindings (easily solved)
+* visualised repository must be on the local filesystem - this was a design decision but can't remember why now. *Far* less HTTP traffic
+involved in just sending commit refs rather than log messages was definitely one concern
+* visualised repository must be able to perform a `git pull` without interaction (e.g. no password or passphrase prompt)
+* no concept of branches - post-receive will always trigger, so it's master or bust for now
+* error intolerant - if something goes wrong, goursome won't really tell you, and bad things will probably happen
