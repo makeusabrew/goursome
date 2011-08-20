@@ -3,6 +3,13 @@
 Visualise your git commits in real time via the magic of [gource](https://github.com/acaudwell/Gource)
 and [node.js](https://github.com/joyent/node).
 
+## Realtime?
+
+Okay, not exactly. What it really does is pass in details of any commits made as soon as it's notified about them -
+how and when it gets notified is flexible, though it was primarily built to be triggered by a `post-receive` git hook;
+e.g. when someone performs a `git push`. You can use it as a `post-commit` hook if you like, or however you want (your
+mileage may vary).
+
 ## How It Works
 
 Pretty crudely at the moment. Your post-receive hook (or other, whatever's most suitable) invokes your node server and
@@ -44,3 +51,27 @@ involved in just sending commit refs rather than log messages was definitely one
 * visualised repository must be able to perform a `git pull` without interaction (e.g. no password or passphrase prompt)
 * no concept of branches - post-receive will always trigger, so it's master or bust for now
 * error intolerant - if something goes wrong, goursome won't really tell you, and bad things will probably happen
+
+## License
+
+(The MIT License)
+
+Copyright (C) 2011 by Nick Payne <nick@kurai.co.uk> 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE
