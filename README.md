@@ -28,7 +28,7 @@ well to simplistic remote invocation (e.g. over http).
 
 4) Run:
 
-    ./server.js /path/to/local/git/repo/ project_namespace | gource --log-format git -i 0 -
+    ./server.js /path/to/local/git/repo/ project_namespace | gource --log-format git -i 0 --key -
 
 5) On a remote, slap this in your `post-receive`, and make sure it has execute permissions:
 
