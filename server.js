@@ -3,25 +3,13 @@
 var util = require('util'),
     spawn = require('child_process').spawn,
     querystring = require('querystring'),
-    path = process.argv[2],
-    namespace = process.argv[3],
-    http = require('http');
+    http = require('http'),
+    zeromq = require('zeromq');
 
-try {
-    process.chdir(path);
-} catch (e) {
-    console.log("Bad dir argument ["+path+"]");
-    process.exit(1);
-}
-
-// initial data population
-var log = spawn('git', ['log',  '--pretty=format:user:%aN%n%ct', '--reverse', '--raw', '--encoding=UTF-8', '--no-renames']);
-log.stdout.on('data', function(data) {
-    process.stdout.write(data);
-});
-
-log.on('exit', function(code) {
-    if (code) throw new Error('Bad Code: '+code);
+var socket = zeromq.createSocket('pub');
+socket.bind("tcp://127.0.0.1:5556", function(err) {
+    if (err) throw err;
+    console.log('bound ZeroMQ pub socket');
 });
 
 http.createServer(function(req, res) {
@@ -35,20 +23,11 @@ http.createServer(function(req, res) {
             var postvars = querystring.parse(body);
 
             if (postvars.namespace && postvars.oldrev && postvars.newrev) {
-                if (postvars.namespace != namespace) {
-                    res.writeHead(200, {'Content-Type' : 'text/plain'});
-                    res.end('Incorrect namespace\n');
-                } else {
-                    updateLog(postvars.oldrev, postvars.newrev, function(code) {
-                        if (code == 0) {
-                            res.writeHead(200, {'Content-Type' : 'text/plain'});
-                            res.end('OK\n');
-                        } else {
-                            res.writeHead(200, {'Content-Type' : 'text/plain'});
-                            res.end('Error - git exited with code '+code);
-                        }
-                    });
-                }
+                console.log('sending refs ['+postvars.oldrev+'] .. ['+postvars.newrev+'] to channel ['+postvars.namespace+']');
+
+                socket.send(postvars.namespace+' '+JSON.stringify(postvars));
+                res.writeHead(200, {'Content-Type' : 'text/plain'});
+                res.end('OK\n');
             } else {
                 res.writeHead(500, {'Content-Type' : 'text/plain'});
                 res.end('Missing required parameters\n');
@@ -59,19 +38,3 @@ http.createServer(function(req, res) {
         res.end('Use POST instead\n');
     }
 }).listen(2424);
-
-var updateLog = function(oldrev, newrev, callback) {
-    spawn('git', ['pull']).on('exit', function(code) {
-        if (code) throw new Error('Bad Code: '+code);
-
-        var log = spawn('git', ['log',  '--pretty=format:user:%aN%n%ct', '--reverse', '--raw', '--encoding=UTF-8', '--no-renames', oldrev+'..'+newrev]);
-
-        log.stdout.on('data', function(data) {
-            process.stdout.write(data);
-        });
-
-        log.on('exit', function(code) {
-            callback(code);
-        });
-    });
-}
