@@ -28,15 +28,24 @@ well to simplistic remote invocation (e.g. over http).
 
 4) Run:
 
-    ./server.js /path/to/local/git/repo/ project_namespace | gource --log-format git -i 0 --key -
+    ./server.js
 
-5) On a remote, slap this in your `post-receive`, and make sure it has execute permissions:
+This will start an instance of the HTTP server which is responsible for listening
+to incoming notifications before publishing them to a ZeroMQ socket.
+
+5) Run:
+
+    ./goursome.js /path/to/local/git/repo/ project_name | gource --log-format git -i 0 --key -
+
+You can now invoke as many instances of goursome as you want project visualisations for.
+
+6) On a remote, slap this in your `post-receive`, and make sure it has execute permissions:
 
     #!/bin/bash
     read oldrev newrev refname
-    curl -d "oldrev=$oldrev&newrev=$newrev&refname=$refname&namespace=project_namespace" http://your-server-address:2424/ > /dev/null 2>&1
+    curl -d "oldrev=$oldrev&newrev=$newrev&refname=$refname&namespace=project_name" http://your-server-address:2424/ > /dev/null 2>&1
 
-6) You're done!
+7) You're done!
 
 ## Use Cases
 
