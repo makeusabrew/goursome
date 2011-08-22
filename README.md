@@ -48,7 +48,7 @@ pushes to - e.g. in the most svn-esque use case where everyone in the team pushe
 
 Plenty of them:
 
-* each visualisation is bound to a single HTTP server - can't run more than one per machine without altering port bindings (easily solved)
+* <del>each visualisation is bound to a single HTTP server - can't run more than one per machine without altering port bindings (easily solved)</del>
 * visualised repository must be on the local filesystem - this was a design decision but can't remember why now. *Far* less HTTP traffic
 involved in just sending commit refs rather than log messages was definitely one concern
 * visualised repository must be able to perform a `git pull` without interaction (e.g. no password or passphrase prompt)
