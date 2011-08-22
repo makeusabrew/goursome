@@ -12,13 +12,14 @@ var socket = zeromq.createSocket('sub');
 
 try {
     process.chdir(path);
-    process.stderr.write('changed to path: '+path+'\n');
+    process.stderr.write('changed to path ['+path+']\n');
 } catch (e) {
     console.log("Bad dir argument ["+path+"]");
     process.exit(1);
 }
 
 socket.subscribe(namespace);
+process.stderr.write('subscribed to channel ['+namespace+']\n');
 socket.connect("tcp://127.0.0.1:5556");
 
 socket.on('message', function(data) {
