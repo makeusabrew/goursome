@@ -6,9 +6,8 @@ var util = require('util'),
     path = process.argv[2],
     namespace = process.argv[3],
     http = require('http'),
-    zeromq = require('zeromq');
-
-var socket = zeromq.createSocket('sub');
+    redis = require('redis'),
+    sub = redis.createClient();
 
 try {
     process.chdir(path);
@@ -18,16 +17,19 @@ try {
     process.exit(1);
 }
 
-socket.subscribe(namespace);
+sub.subscribe(namespace);
 process.stderr.write('subscribed to channel ['+namespace+']\n');
-socket.connect("tcp://127.0.0.1:5556");
 
-socket.on('message', function(data) {
-    var decoded = data.toString().split(" ");
-    var msg = JSON.parse(decoded[1]);
-
-    updateLog(msg.oldrev, msg.newrev, function(code) {
-        process.stderr.write('Updated ['+msg.namespace+'] git repository\n');
+sub.on('message', function(channel, message) {
+    var data = null;
+    try {
+        data = JSON.parse(message);
+    } catch (e) {
+        process.stderr.write("Could not decode publisher message ["+message+"]");
+        return;
+    }
+    updateLog(data.oldrev, data.newrev, function(code) {
+        process.stderr.write('Updated ['+data.namespace+'] git repository\n');
     });
 });
 

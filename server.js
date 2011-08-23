@@ -4,13 +4,8 @@ var util = require('util'),
     spawn = require('child_process').spawn,
     querystring = require('querystring'),
     http = require('http'),
-    zeromq = require('zeromq');
-
-var socket = zeromq.createSocket('pub');
-socket.bind("tcp://127.0.0.1:5556", function(err) {
-    if (err) throw err;
-    console.log('bound ZeroMQ pub socket');
-});
+    redis = require('redis'),
+    pub = redis.createClient();
 
 http.createServer(function(req, res) {
     // simply listen out for POST requests
@@ -25,7 +20,8 @@ http.createServer(function(req, res) {
             if (postvars.namespace && postvars.oldrev && postvars.newrev) {
                 console.log('sending refs ['+postvars.oldrev+'] .. ['+postvars.newrev+'] to channel ['+postvars.namespace+']');
 
-                socket.send(postvars.namespace+' '+JSON.stringify(postvars));
+                //socket.send(postvars.namespace+' '+JSON.stringify(postvars));
+                pub.publish(postvars.namespace, JSON.stringify(postvars));
                 res.writeHead(200, {'Content-Type' : 'text/plain'});
                 res.end('OK\n');
             } else {
