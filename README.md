@@ -18,34 +18,35 @@ the input revision references and then writes the output to stdout, which is pip
 takes care of everything else - all goursome does is provide a way of getting it new data in a manner which lends itself
 well to simplistic remote invocation (e.g. over http).
 
+## Dependencies
+
+Make sure you've got node (>= 0.4.0), gource (>= 0.35) and `redis-server` installed
+on your machine(s) you wish to run goursome on. You'll need the `node_redis` driver too.
+
 ## Quick Install
 
-1) Make sure you've got node properly installed, as goursome needs it to run
+1) Clone this repository to wherever you choose
 
-2) Make sure you've got gource installed too (ubuntu users: compile a later version than the 0.28 which ships with 11.04!)
-
-3) Clone this repository to wherever you choose
-
-4) Run:
+2) Run:
 
     ./server.js
 
 This will start an instance of the HTTP server which is responsible for listening
-to incoming notifications before publishing them to a ZeroMQ socket.
+to incoming notifications before publishing them to a Redis channel.
 
-5) Run:
+3) Run:
 
     ./goursome.js /path/to/local/git/repo/ project_name | gource --log-format git -i 0 --key -
 
 You can now invoke as many instances of goursome as you want project visualisations for.
 
-6) On a remote, slap this in your `post-receive`, and make sure it has execute permissions:
+4) On a remote, slap this in your `post-receive`, and make sure it has execute permissions:
 
     #!/bin/bash
     read oldrev newrev refname
     curl -d "oldrev=$oldrev&newrev=$newrev&refname=$refname&namespace=project_name" http://your-server-address:2424/ > /dev/null 2>&1
 
-7) You're done!
+5) You're done!
 
 ## Use Cases
 
@@ -63,8 +64,8 @@ involved in just sending commit refs rather than log messages was definitely one
 * visualised repository must be able to perform a `git pull` without interaction (e.g. no password or passphrase prompt)
 * no concept of branches - post-receive will always trigger, so it's master or bust for now
 * error intolerant - if something goes wrong, goursome won't really tell you, and bad things will probably happen
-* namespace stuff is a bit rubbish - it was just a quick fix to stop multiple post-receive hooks tieing the server process in knots firing
-commit hashes at it it knew nothing about (as it's always bound to just one repository for now)
+* namespace stuff is a bit rubbish - <del>it was just a quick fix to stop multiple post-receive hooks tieing the server process in knots firing
+commit hashes at it it knew nothing about (as it's always bound to just one repository for now)</del>
 
 ## License
 
